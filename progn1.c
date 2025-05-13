@@ -27,7 +27,7 @@ int main() {
 
         if (choice == 1) {
             double a, b;
-            printf("\n Введіть a: ");
+            printf("\nВведіть a: ");
             scanf("%lf", &a);
             printf("Введіть b: ");
             scanf("%lf", &b);
@@ -37,7 +37,7 @@ int main() {
         }
         else if (choice == 2) {
             int n;
-            printf("\n Введіть розмір масиву (до %d): ", SIZE);
+            printf("\nВведіть розмір масиву (до %d): ", SIZE);
             scanf("%d", &n);
 
             if (n <= 0 || n > SIZE) {
@@ -55,7 +55,12 @@ int main() {
             printf("Індекс мінімального за модулем елемента: %d (значення: %d)\n", minAbsIndex, arr[minAbsIndex]);
 
             int product = productBetweenTwoZeros(arr, n);
-            printf("Добуток елементів між першим і другим нулями: %d\n", product);
+            if (product == -1)
+                printf("У масиві менше двох нульових елементів – добуток не обчислюється.\n");
+            else if (product == -2)
+                printf("Між першим і другим нулями немає жодного елемента – добуток дорівнює 1.\n");
+            else
+                printf("Добуток елементів між першим і другим нульовими: %d\n", product);
         }
         else if (choice != 0) {
             printf("Невірний вибір. Спробуйте ще раз.\n");
@@ -83,9 +88,11 @@ void fillArray(int arr[], int n) {
 }
 
 void printArray(int arr[], int n) {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++) {
         printf("%4d ", arr[i]);
-    printf("\n");
+        if ((i + 1) % 10 == 0)
+            printf("\n");
+    }
 }
 
 int findMinAbsIndex(int arr[], int n) {
@@ -101,18 +108,24 @@ int productBetweenTwoZeros(int arr[], int n) {
     int first = -1, second = -1;
     for (int i = 0; i < n; i++) {
         if (arr[i] == 0) {
-            if (first == -1) first = i;
+            if (first == -1)
+                first = i;
             else {
                 second = i;
                 break;
             }
         }
     }
-    if (first != -1 && second != -1 && second - first > 1) {
-        int product = 1;
-        for (int i = first + 1; i < second; i++)
-            product *= arr[i];
-        return product;
-    }
-    return 0;
+
+    if (first == -1 || second == -1)
+        return -1; // недостатньо нулів
+
+    if (second - first == 1)
+        return -2; // між нулями нічого
+
+    int product = 1;
+    for (int i = first + 1; i < second; i++)
+        product *= arr[i];
+
+    return product;
 }
